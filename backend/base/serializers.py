@@ -26,30 +26,24 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
         return is_admin
 
-# User credential by JWT with a refresh Token for New Users
+
+
+# User credential by JWT with an Access Token for New Users
 class UserWithRefreshToken(UserProfileSerializer):
-    refresh_token = serializers.SerializerMethodField(read_only=True)
+    token = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
-      model = User
-      fields = ['id', 'username', 'email', "name", "is_admin", 'refresh_token']
+        model = User
+        fields = ['id', 'username', 'email',
+                  "name", "is_admin", 'token']
 
-    def get_refresh_token(self, obj):
-        refresh_token = RefreshToken.for_user(obj)
-        return str(refresh_token)
+    def get_token(self, obj):
+        token = RefreshToken.for_user(obj)
+        return str(token.access_token)
 
-# User credential by JWT with a access Token for Login Users
-class UserWithAccessToken(UserProfileSerializer):
-    access_token = serializers.SerializerMethodField(read_only=True)
 
-    class Meta:
-      model = User
-      fields = ['id', 'username', 'email', "name", "is_admin" ,'access_token']
 
-    def get_refresh_token(self, obj):
-        access_token = AccessToken.for_user(obj)
-        return str(access_token)
-
+# Product serializer
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product

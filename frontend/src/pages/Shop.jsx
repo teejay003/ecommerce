@@ -4,7 +4,7 @@ function Shop() {
  
   
   return (
-    <div>
+    <div className='shop'>
       
     </div>
   )

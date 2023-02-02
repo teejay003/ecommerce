@@ -4,28 +4,39 @@ import Home from "./pages/Home";
 import { Route, Routes} from 'react-router-dom'
 import Shop from "./pages/Shop";
 import ProductDetail from "./pages/ProductDetail";
-import SearchBar from "./components/SearchBar";
 import Cart from "./pages/Cart";
+import Register from "./pages/Register";
+import Login from "./pages/Login";
+import Profile from "./pages/Profile";
+import Shipping from "./pages/Shipping";
+import { ToastContainer } from 'react-toastify';
+
+
+
 
 
 function App() {
-  return (
-    <div> 
+
+    return (
+    <>
       <Header />
-      <main >
-      <SearchBar />
-        <div className="container">
+      <main>
           <Routes>
-            <Route path="/" element= {<Home />} />
-            <Route path="/shop" element= {<Shop />} />
+            <Route path="/" element={<Home />} />
+            <Route path="/shop" element={<Shop />} />
             <Route path="/product/:id" element={<ProductDetail />} />
-            <Route path="/product/cart/" element = {<Cart />} />
+            <Route path="/product/cart/" element={<Cart />} />
+            <Route path="/user/register/" element={<Register />} />
+            <Route path="/user/profile/" element={<Profile />} />
+            <Route path="/user/login/" element={<Login />} />
+            <Route path="/checkout/shipping/" element={<Shipping />} />
           </Routes>
-       </div>
       </main>
 
       <Footer />
-    </div>
+    {/* Alert Container */}
+    <ToastContainer />
+    </>
   );
 }
 
