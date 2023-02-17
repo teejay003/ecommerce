@@ -80,7 +80,7 @@ function ProductDetail() {
               Out Of Stock
             </button>
           ) : (
-            <div className="d-flex align-items-start">
+            <div className="d-flex align-items-start mb-3">
               <ProductQuantiy
                 product={product}
                 quantity={quantity}

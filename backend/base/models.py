@@ -6,11 +6,11 @@ from .img import image_resize
 
 # Product categories
 CHOICES = [
-    ("CL", "CLOTHS"),
-    ("SH", "SHOES"),
-    ("BA", "BAGS"),
-    ("WA", "WATCHES"),
-    ("EL", "ELECTRONICS"),
+    ("CLOTHS", "CLOTHS"),
+    ("SHOES", "SHOES"),
+    ("BAGS", "BAGS"),
+    ("WATCHES", "WATCHES"),
+    ("ELECTRONICS", "ELECTRONICS"),
 ]
 
 
@@ -22,7 +22,7 @@ class Product(models.Model):
     category = models.CharField(max_length=200, blank=True, choices=CHOICES)
     description = models.TextField(blank=True)
     rating = models.DecimalField(
-        max_digits=7, decimal_places=2, blank=True, null=True)
+        max_digits=7, decimal_places=2, default=0)
     number_reviews = models.IntegerField(blank=True, default=0)
     price = models.DecimalField(
         max_digits=7, decimal_places=2, blank=True, null=True)
@@ -70,12 +70,12 @@ class Order(models.Model):
         auto_now_add=True)
 
     def __str__(self):
-        return str(self.created_date)
+        return str(self.created_date.strftime('%d %b, %Y - %H:%M%p'))
 
 
 class OrderItem(models.Model):
     product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True)
-    order = models.ForeignKey(Order, on_delete=models.SET_NULL, null=True)
+    order = models.ForeignKey(Order, on_delete=models.SET_NULL, null=True, related_name= 'orderItems')
     name = models.CharField(max_length=200, blank=True)
     quantity = models.IntegerField(blank=True, default=0)
     price = models.DecimalField(
@@ -88,10 +88,11 @@ class OrderItem(models.Model):
 
 class ShippinAddress(models.Model):
     order = models.OneToOneField(
-        Order, on_delete=models.CASCADE, null=True, blank=True)
+        Order, on_delete=models.CASCADE, null=True, blank=True, related_name= "shipping")
     address = models.CharField(max_length=200, blank=True)
     city = models.CharField(max_length=200, blank=True)
     country = models.CharField(max_length=200, blank=True)
+    postal_code = models.IntegerField(blank=True, default=0)
     shipping_price = models.DecimalField(
         max_digits=7, decimal_places=2, blank=True, null=True)
 

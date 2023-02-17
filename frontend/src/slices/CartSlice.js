@@ -9,9 +9,9 @@ const initialState = {
 // ADD ITEM TO CART
 export const addItemToCart = createAsyncThunk(
   "cart/addToItemToCart",
-  async ({ id, quantity }) => {
+  async ({ id, quantity,totalPrice }) => {
     const { data } = await axios.get(`/api/products/${id}`);
-    return { data, quantity };
+    return { data, quantity, totalPrice };
   }
 );
 
@@ -51,6 +51,12 @@ const CartSlice = createSlice({
       state.cartItems = cartItems
       localStorage.setItem("cartItems", JSON.stringify(cartItems))
     },
+    
+    addtotalPrice: (state, action) => {
+      state.cartItems[0].totalPrice = action.payload
+    
+      localStorage.setItem("cartItems", JSON.stringify(state.cartItems))
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -59,7 +65,8 @@ const CartSlice = createSlice({
       })
 
       .addCase(addItemToCart.fulfilled, (state, action) => {
-        const { data, quantity } = action.payload;
+        const { data, quantity, totalPrice } = action.payload;
+        data.totalPrice = totalPrice
 
         let cartItems = JSON.parse(localStorage.getItem("cartItems")) || [];
 
@@ -83,5 +90,5 @@ const CartSlice = createSlice({
   },
 });
 
-export const { removCartItems, changeQuantity } = CartSlice.actions;
+export const { removCartItems, changeQuantity, addtotalPrice } = CartSlice.actions;
 export default CartSlice.reducer;

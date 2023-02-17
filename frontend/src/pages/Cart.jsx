@@ -2,23 +2,32 @@ import Spinner from '../components/Spinner'
 import { useNavigate } from 'react-router-dom';
 
 // Redux
-import { removCartItems, changeQuantity } from '../slices/CartSlice';
+import { removCartItems, changeQuantity, addtotalPrice } from '../slices/CartSlice';
 import { useDispatch, useSelector } from 'react-redux';
 
 function Cart() {
-    const { loading, cartItems } = useSelector(state => state.cart)
-    const dispatch = useDispatch()
-    const redirect = useNavigate()
+  const { loading, cartItems } = useSelector(state => state.cart)
+  const dispatch = useDispatch()
+  const redirect = useNavigate()
+  const totalPrice = Number(cartItems.reduce((acc, item) => acc + item.quantity * item.price, 0).toFixed(2)) + Number(10);
+  
     
     
     if (loading) return <Spinner />
 
   
     
-    const handleQuantityChange = (e) => {
-        dispatch(changeQuantity({id: +e.target.id, quantity: +e.target.value}))
-     
-    }
+  const handleQuantityChange = (e) => {
+    dispatch(changeQuantity({id: +e.target.id, quantity: +e.target.value}))  
+  }
+
+  const handleCheckout = () => {
+
+    dispatch(addtotalPrice(totalPrice))
+    redirect("/checkout/shipping/");
+  }
+  
+  
 
 
   return (
@@ -113,19 +122,12 @@ function Cart() {
                   <h5>Total</h5>
                   <h5>
                     $
-                    {Number(
-                      cartItems
-                        .reduce(
-                          (acc, item) => acc + item.quantity * item.price,
-                          0
-                        )
-                        .toFixed(2)
-                    ) + Number(10)}
+                    {totalPrice}
                   </h5>
                 </div>
                 <button
                   className="btn btn-block bg-pri font-weight-bold my-3 py-3"
-                  disabled={cartItems.length === 0} onClick={()=> redirect('/checkout/shipping/') }
+                  disabled={cartItems.length === 0} onClick={handleCheckout}
                 >
                   Proceed To Checkout
                 </button>

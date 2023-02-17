@@ -9,7 +9,14 @@ import Register from "./pages/Register";
 import Login from "./pages/Login";
 import Profile from "./pages/Profile";
 import Shipping from "./pages/Shipping";
+import Order from "./pages/Order";
+import Payment from "./pages/Payment";
+import Users from "./pages/admin/Users";
 import { ToastContainer } from 'react-toastify';
+import Products from "./pages/admin/Products";
+import UpdateProduct from "./pages/admin/UpdateProduct";
+import CreateProduct from "./pages/admin/CreateProduct";
+import Orders from "./pages/admin/Orders";
 
 
 
@@ -24,12 +31,19 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/shop" element={<Shop />} />
-            <Route path="/product/:id" element={<ProductDetail />} />
+            <Route path="/product/:id/" element={<ProductDetail />} />
             <Route path="/product/cart/" element={<Cart />} />
             <Route path="/user/register/" element={<Register />} />
             <Route path="/user/profile/" element={<Profile />} />
             <Route path="/user/login/" element={<Login />} />
             <Route path="/checkout/shipping/" element={<Shipping />} />
+            <Route path="/checkout/payment/" element={<Payment />} />
+            <Route path="/checkout/order/" element={<Order />} />
+            <Route path="/admin/users/" element={<Users />} />
+            <Route path="/admin/products/" element={<Products />} />
+            <Route path="/admin/orders/" element={<Orders />} />
+            <Route path="/admin/product/update/:id/" element={<UpdateProduct />} />
+            <Route path="/admin/product/create/" element={<CreateProduct />} />
           </Routes>
       </main>
 

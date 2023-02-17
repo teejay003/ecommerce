@@ -1,3 +1,4 @@
+
 from django.shortcuts import render
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
@@ -6,9 +7,13 @@ from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
 from rest_framework import status
 from .models import (
+    Order,
+    OrderItem,
     Product,
+    ShippinAddress,
 )
 from .serializers import (
+    OrderSerilizer,
     ProductSerializer,
     UserProfileSerializer,
     UserWithRefreshToken,
@@ -18,10 +23,11 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 
+
+
 # CREATE USER
 @api_view(['POST'])
 def register_user(request):
-    print(request.data['username'])
     data = request.data
 
     # Check if username alredy taken
@@ -72,7 +78,6 @@ class MyTokenObtainPairView(TokenObtainPairView):
 @permission_classes([IsAuthenticated])
 def get_user_profile(request):
     user = request.user
-    print(user)
     serializer = UserProfileSerializer(user, many=False)
     return Response(serializer.data)
 
@@ -100,15 +105,15 @@ def update_user_profile(request):
             user.password = make_password(data['password'])
         user.save()
     else:
-        message = {'userExist': True,'message': f"The username \"{data['username']}\" has been taken."}
+        message = {'userExist': True,
+                   'message': f"The username \"{data['username']}\" has been taken."}
         return Response(message)
 
     serializer = UserWithRefreshToken(user, many=False)
     return Response(serializer.data)
 
+
 # GET ALL USER PROFILE
-
-
 @api_view(['GET'])
 @permission_classes([IsAdminUser])
 def get_users(request):
@@ -116,12 +121,47 @@ def get_users(request):
     serializer = UserProfileSerializer(users, many=True)
     return Response(serializer.data)
 
+
+# DELETE USER
+@api_view(['DELETE'])
+@permission_classes([IsAdminUser])
+def delete_user(request, id):
+    user = User.objects.get(pk=id)
+    user.delete()
+    users = User.objects.all()
+    serializer = UserProfileSerializer(users, many=True)
+    return Response(serializer.data)
+
+
+# EDIT USER
+@api_view(['PUT'])
+@permission_classes([IsAdminUser])
+def edit_user(request, id):
+    pass
+
+
+
+# CREATE PRODUCT
+@api_view(['POST'])
+@permission_classes([IsAdminUser])
+def create_product(request):
+    data = request.data
+    Product.objects.create(
+        name = data['name'],
+        brand = data['brand'],
+        image = data['image'],
+        category = data['category'],
+        count_in_stock = data['stock'],
+        description = data['description'],
+        price = data['price']
+    )
+    print(data)
+    return Response('Product created')
+
 # GET ALL PRODUCTS
-
-
 @api_view(['GET'])
 def get_products(request):
-    products = Product.objects.all()
+    products = Product.objects.all().order_by('-created_date')
     serializer = ProductSerializer(products, many=True)
     return Response(serializer.data)
 
@@ -131,4 +171,102 @@ def get_products(request):
 def get_product(request, id):
     product = Product.objects.get(pk=id)
     serializer = ProductSerializer(product, many=False)
+    return Response(serializer.data)
+
+
+
+# DELETE SINGLE PRODUCT
+@api_view(['DELETE'])
+@permission_classes([IsAdminUser])
+def delete_product(request, id):
+    product = Product.objects.get(pk=id)
+    product.delete()
+    products = Product.objects.all().order_by('-created_date')
+    serializer = ProductSerializer(products, many = True)
+    return Response(serializer.data)
+
+
+# UPDATE SINGLE PRODUCT
+@api_view(['PUT'])
+@permission_classes([IsAdminUser])
+def update_product(request, id):
+    product = Product.objects.get(pk=id)
+
+    data = request.data
+    image = data['image']
+
+    # Check if image is a file or path
+    is_path = isinstance(image, str)
+    if (not is_path):
+        product.image = data['image']
+
+    product.name = data['name']
+    product.brand = data['brand']
+    product.category = data['category']
+    product.price = data['price']
+    product.count_in_stock = data['stock']
+    product.description = data['description']
+    product.save()
+    serializer = ProductSerializer(product, many=False)
+    return Response(serializer.data)
+
+
+# PLACE ORDER
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def place_order(request):
+    user = request.user
+    data = request.data
+
+    shipping = data['order']['checkout']['shipping']
+    payment_method = data['order']['checkout']['paymentMethod']
+    total_price = data['order']['totalPrice']
+    cart_items = data['order']['cartItems']
+
+    # Creating Order
+    order = Order.objects.create(
+        user=user,
+        payment_method=payment_method,
+        shipping_price=10,
+        total_price=total_price,
+        tax_price=0.08
+    )
+
+    # Creating Order items
+    for item in cart_items:
+        OrderItem.objects.create(
+            product=Product.objects.get(id=item['id']),
+            order=order,
+            name=item['name'],
+            quantity=item['quantity'],
+            price=item['price'],
+            image=item['image']
+
+        )
+
+    # Creating Shipping Address
+    ShippinAddress.objects.create(
+        order=order,
+        address=shipping['address'],
+        city=shipping['city'],
+        country=shipping['country'],
+        postal_code=shipping['postalCode'],
+        shipping_price=10
+    )
+
+    serializer = OrderSerilizer(order, many=False)
+    return Response(serializer.data)
+
+# GET ORDER
+def get_order(request, id):
+    order = Order.objects.get(pk=id)
+    serializer = OrderSerilizer(order, many=False)
+    return Response(serializer.data)
+
+# GET ORDERS
+@api_view(['GET'])
+@permission_classes([IsAdminUser])
+def get_orders(request):
+    orders = Order.objects.all()
+    serializer = OrderSerilizer(orders, many= True)
     return Response(serializer.data)
