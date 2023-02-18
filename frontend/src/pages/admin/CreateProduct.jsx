@@ -1,6 +1,6 @@
 import  { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
-import { createProduct } from '../../slices/ProductSlice';
+import { createProduct, setCreated } from '../../slices/ProductSlice';
 import { useSelector, useDispatch } from 'react-redux';
 import { Rating } from '../../components/Product';
 
@@ -10,6 +10,7 @@ function CreateProduct() {
   const redirect = useNavigate()
   const dispatch = useDispatch()
   const { user } = useSelector((state) => state.auth);
+  const { created } = useSelector((state) => state.products);
   const [credential, setCredential] = useState({
     name: "",
     brand: "",
@@ -21,16 +22,29 @@ function CreateProduct() {
   })
 
   const { name, brand, category, image, stock, description, price } = credential
+
+  
   
 
     // ====== Fetch product by ID on load ======
   useEffect(() => {
     if (!user.is_admin) {
       redirect("/");
+    } else {
+      dispatch(setCreated())
     }
+    
     // eslint-disable-next-line
   }, []);
   // ====================================
+
+
+  useEffect(() => {
+    if (created) {
+      redirect('/admin/products/')
+    }
+    // eslint-disable-next-line
+  },[created])
 
 
   const handleFormSubmit = (e) => {
@@ -71,12 +85,7 @@ function CreateProduct() {
       }))
    }
 
-    
-   
-    
   }
-
-
 
   return (
     <div className="container">

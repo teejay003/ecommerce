@@ -2,7 +2,7 @@
 function SearchBar() {
   
   return (
-    <div className="container-fluid bg-white mt-4">
+    <div className="container-fluid bg-white mt-4 py-3">
       <div className="row">
         <div className="col d-none d-md-flex align-items-center">
          

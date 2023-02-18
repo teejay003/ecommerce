@@ -1,8 +1,8 @@
 import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import Spinner from "../../components/Spinner";
-import { useNavigate, Link } from "react-router-dom";
-import { fetchOrders } from "../../slices/AdminSlice";
+import { useNavigate } from "react-router-dom";
+import { fetchOrders, setLoading } from "../../slices/AdminSlice";
 
 
 function Orders() {
@@ -64,7 +64,10 @@ function Orders() {
                           )}
                         </td>
 
-                        <td><Link><button className="btn btn-light">Details</button></Link></td>
+                        <td><button onClick={() => {
+                          dispatch(setLoading())
+                          redirect(`/admin/order/${order.id}`)
+                        }} className="btn btn-light">Details</button></td>
                         
                       </tr>
                     ))}

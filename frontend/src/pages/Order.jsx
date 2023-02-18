@@ -1,7 +1,7 @@
 import React from "react";
 import ProgessBar from "../components/ProgessBar";
 import { useSelector, useDispatch } from "react-redux";
-// import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { placeOrder } from "../slices/CheckOutSlice";
 
 function Order() {
@@ -9,7 +9,7 @@ function Order() {
   const { cartItems } = useSelector((state) => state.cart);
 
   const { shipping, paymentMethod } = useSelector((state) => state.checkout);
-  // const redirect = useNavigate();
+  const redirect = useNavigate();
   const dispatch = useDispatch();
   const checkout = useSelector((state) => state.checkout);
   const totalPrice = cartItems[0].totalPrice;
@@ -42,8 +42,9 @@ function Order() {
                 <div className="container">
                   <div className="col-md-12">
                     <div className="text-center">
-                      <i className="fab fa-mdb fa-4x ms-0"></i>
-                      <p className="pt-0">MDBootstrap.com</p>
+                      <h4 className="text-muted font-weight-bold my-5">
+                        ORDER SUMMARY
+                      </h4>
                     </div>
                   </div>
 
@@ -51,10 +52,14 @@ function Order() {
                     <div className="col-sm-6">
                       <ul className="list-unstyled">
                         <li className="text-muted">
-                          To: <span>John Lorem</span>
+                          To: <span>{user.username.toUpperCase()}</span>
                         </li>
-                        <li className="text-muted">Street, City</li>
-                        <li className="text-muted">State, Country</li>
+                        <li className="text-muted">
+                          {shipping.address}, {shipping.city}
+                        </li>
+                        <li className="text-muted">
+                          {shipping.postalCode}, {shipping.country}
+                        </li>
                         <li className="text-muted">
                           <i className="fas fa-phone"></i> 123-456-789
                         </li>
@@ -83,9 +88,9 @@ function Order() {
                     </div>
                   </div>
 
-                  <div className="row my-2 mx-1 justify-content-center">
+                  <div className="row my-2 mx-1 justify-content-center ">
                     <table className="table table-striped table-borderless">
-                      <thead className="text-white">
+                      <thead className="text-white bg-dark">
                         <tr>
                           <th scope="col">#</th>
                           <th scope="col">Description</th>
@@ -95,27 +100,15 @@ function Order() {
                         </tr>
                       </thead>
                       <tbody>
-                        <tr>
-                          <th scope="row">1</th>
-                          <td>Pro Package</td>
-                          <td>4</td>
-                          <td>$200</td>
-                          <td>$800</td>
-                        </tr>
-                        <tr>
-                          <th scope="row">2</th>
-                          <td>Web hosting</td>
-                          <td>1</td>
-                          <td>$10</td>
-                          <td>$10</td>
-                        </tr>
-                        <tr>
-                          <th scope="row">3</th>
-                          <td>Consulting</td>
-                          <td>1 year</td>
-                          <td>$300</td>
-                          <td>$300</td>
-                        </tr>
+                        {cartItems.map((item, i) => (
+                          <tr key={i}>
+                            <th scope="row">{i+1}</th>
+                            <td>{item.name}</td>
+                            <td>{item.quantity}</td>
+                            <td>${item.price}</td>
+                            <td>${item.price * item.quantity}</td>
+                          </tr>
+                        ))}
                       </tbody>
                     </table>
                   </div>
@@ -128,27 +121,31 @@ function Order() {
                     <div className="col-xl-3">
                       <ul className="list-unstyled">
                         <li className="text-muted ms-3">
-                          <span className="text-black me-4">SubTotal</span>$1110
+                          <span className="text-black me-4">SubTotal</span> ${totalPrice}
                         </li>
                         <li className="text-muted ms-3 mt-2">
-                          <span className="text-black me-4">Tax(15%)</span>$111
+                          <span className="text-black me-4">Tax(15%)</span>{" "}
+                          ${(totalPrice * 15) / 100}
                         </li>
                       </ul>
                       <p className="text-black float-start">
                         <span className="text-black me-3"> Total Amount</span>
-                        <span>$1221</span>
+                        <span> ${totalPrice  + ((totalPrice * 15) / 100)}</span>
                       </p>
                     </div>
                   </div>
                   <hr />
                   <div className="row">
                     <div className="col-sm-6">
+                      <h6 className="d-inline">PAYMENT METHOD:</h6> <span>{ paymentMethod }</span>
                       <p>Thank you for your purchase</p>
                     </div>
-                    <div className="col-sm-6 justify-content-end d-flex">
+                    <div className="col-sm-6 justify-content-end al d-flex">
+                      <button className="btn btn-dark" onClick={()=> redirect(-1)}>Back</button>
                       <button
                         type="button"
-                        className="btn btn-primary text-capitalize "
+                        className="btn btn-warning ml-3"
+                        onClick={handleFormSubmit}
                       >
                         Pay Now
                       </button>

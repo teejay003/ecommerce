@@ -89,7 +89,11 @@ export const deleteProduct = createAsyncThunk(
 const ProductSlice = createSlice({
   name: "products",
   initialState,
-  reducers: {},
+  reducers: {
+    setCreated: (state) => {
+      state.created = false
+    }
+  },
   extraReducers: (builder) => {
     // Fetching all products handler
     builder.addCase(fetchProducts.fulfilled, (state, action) => {
@@ -119,6 +123,8 @@ const ProductSlice = createSlice({
     builder
       .addCase(createProduct.fulfilled, (state, action) => {
         toast.success('New Product created!')
+        state.products = action.payload
+        state.created = true
       })
       .addCase(createProduct.rejected, (state, action) => {
         toast.error('Something went wrong!')
@@ -139,5 +145,8 @@ const ProductSlice = createSlice({
       });
   },
 });
+
+
+export const {setCreated} = ProductSlice.actions
 
 export default ProductSlice.reducer;

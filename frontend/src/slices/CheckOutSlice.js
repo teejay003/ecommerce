@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
+import { toast } from 'react-toastify';
 
 
 
@@ -18,9 +19,9 @@ import axios from 'axios';
 )
 
 const initialState = {
-  shipping: null,
-  paymentMethod: null,
-  order: null
+  shipping: {},
+  paymentMethod: '',
+  order: {}
 }
 
 const CheckOutSlice = createSlice({
@@ -41,11 +42,11 @@ const CheckOutSlice = createSlice({
     builder
       .addCase(placeOrder.fulfilled, (state, action) => {
         state.order = action.payload
-        console.log(action.payload)
+        toast.success('Successful placed order')
         
       })
       .addCase(placeOrder.rejected, (state, action) => {
-
+        toast.error('Something went wrong')
       })
   }
 })

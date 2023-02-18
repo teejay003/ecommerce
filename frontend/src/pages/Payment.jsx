@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useState } from 'react';
 import { addPaymentMethod } from '../slices/CheckOutSlice';
+import PayPal from '../components/PayPal';
 
 function Payment() {
   const dispatch = useDispatch()
@@ -61,7 +62,8 @@ function Payment() {
                         </div>
                   
                     </div>
-                </div>
+            </div>
+            <PayPal />
           </div>
       }
     </>

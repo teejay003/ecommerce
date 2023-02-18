@@ -17,6 +17,7 @@ import Products from "./pages/admin/Products";
 import UpdateProduct from "./pages/admin/UpdateProduct";
 import CreateProduct from "./pages/admin/CreateProduct";
 import Orders from "./pages/admin/Orders";
+import OrderDetails from "./pages/admin/OrderDetails";
 
 
 
@@ -42,6 +43,7 @@ function App() {
             <Route path="/admin/users/" element={<Users />} />
             <Route path="/admin/products/" element={<Products />} />
             <Route path="/admin/orders/" element={<Orders />} />
+            <Route path="/admin/order/:id/" element={<OrderDetails />} />
             <Route path="/admin/product/update/:id/" element={<UpdateProduct />} />
             <Route path="/admin/product/create/" element={<CreateProduct />} />
           </Routes>

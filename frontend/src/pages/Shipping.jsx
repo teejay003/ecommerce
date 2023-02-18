@@ -46,7 +46,7 @@ function Shipping() {
           <h3 className='mb-3'>SHIPPING</h3>
           <ProgessBar page ={'shipping'} />
 
-          <form onSubmit={handleFormSubmit}>
+          <form onSubmit={handleFormSubmit} >
             <div className="form-group">
               <label htmlFor="address">Address</label>
               <input type="text" id="address" className="form-control search-form" placeholder='Enter your address' value={address} onChange={handleShippingField} required/>
@@ -63,7 +63,8 @@ function Shipping() {
               <label htmlFor="postalCode">Postal Code</label>
               <input type="text" id="postalCode" className="form-control search-form" placeholder='Enter Postal Code' value={postalCode} onChange={handleShippingField} required />
             </div>
-            <button type="submit" className='btn btn-dark'>Proceed</button>
+            <button type="submit" className='btn btn-dark mb-3' onClick={()=> redirect('/product/cart/')}>Back</button>
+            <button type="submit" className='btn btn-warning ml-2 mb-3'>Proceed</button>
           </form>
         </div>
       }
