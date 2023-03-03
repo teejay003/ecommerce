@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 
 const initialState = {
   products: [],
+  shopProducts:[],
   product: {
     name: "",
     brand: "",
@@ -15,6 +16,7 @@ const initialState = {
   },
   loading: true,
   created: false,
+  paginator: {},
 };
 
 
@@ -39,6 +41,17 @@ export const fetchProducts = createAsyncThunk(
   "products/fetchProducts",
   async () => {
     const { data } = await axios.get("/api/products/");
+
+    return data;
+  }
+);
+
+//Fetch all for shop products from database
+export const fetchShopProducts = createAsyncThunk(
+  "products/fetchShopProducts",
+  async ({keyword,page}) => {
+
+    const { data } = await axios.get(`/api/products/shop/?search=${keyword}&page=${page}`);
 
     return data;
   }
@@ -141,6 +154,20 @@ const ProductSlice = createSlice({
         toast.error('Something went wrong!')
       })
       .addCase(updateProduct.pending, (state, action) => {
+        state.loading = true
+      });
+    
+    // Update Product
+    builder
+      .addCase(fetchShopProducts.fulfilled, (state, action) => {
+        state.shopProducts = action.payload.products
+        state.paginator = action.payload.paginator
+        state.loading = false
+      })
+      .addCase(fetchShopProducts.rejected, (state, action) => {
+        toast.error('Something went wrong!')
+      })
+      .addCase(fetchShopProducts.pending, (state, action) => {
         state.loading = true
       });
   },

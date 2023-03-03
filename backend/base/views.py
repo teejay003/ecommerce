@@ -1,11 +1,11 @@
 
-from django.shortcuts import render
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
 from rest_framework import status
+from django.db.models import Q
 from .models import (
     Order,
     OrderItem,
@@ -18,11 +18,10 @@ from .serializers import (
     UserProfileSerializer,
     UserWithRefreshToken,
 )
+from django.core.paginator import Paginator, EmptyPage,  PageNotAnInteger
 
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
-
-
 
 
 # CREATE USER
@@ -140,25 +139,27 @@ def edit_user(request, id):
     pass
 
 
-
 # CREATE PRODUCT
 @api_view(['POST'])
 @permission_classes([IsAdminUser])
 def create_product(request):
     data = request.data
     Product.objects.create(
-        name = data['name'],
-        brand = data['brand'],
-        image = data['image'],
-        category = data['category'],
-        count_in_stock = data['stock'],
-        description = data['description'],
-        price = data['price']
+        name=data['name'],
+        brand=data['brand'],
+        image=data['image'],
+        category=data['category'],
+        count_in_stock=data['stock'],
+        description=data['description'],
+        price=data['price']
     )
-    print(data)
-    return Response('Product created')
+    products = Product.objects.all().order_by('-created_date')
+    serializer = ProductSerializer(products, many=True)
+    return Response(serializer.data)
 
 # GET ALL PRODUCTS
+
+
 @api_view(['GET'])
 def get_products(request):
     products = Product.objects.all().order_by('-created_date')
@@ -174,7 +175,6 @@ def get_product(request, id):
     return Response(serializer.data)
 
 
-
 # DELETE SINGLE PRODUCT
 @api_view(['DELETE'])
 @permission_classes([IsAdminUser])
@@ -182,7 +182,7 @@ def delete_product(request, id):
     product = Product.objects.get(pk=id)
     product.delete()
     products = Product.objects.all().order_by('-created_date')
-    serializer = ProductSerializer(products, many = True)
+    serializer = ProductSerializer(products, many=True)
     return Response(serializer.data)
 
 
@@ -258,15 +258,61 @@ def place_order(request):
     return Response(serializer.data)
 
 # GET ORDER
+
+
+@api_view(['GET'])
+@permission_classes([IsAdminUser])
 def get_order(request, id):
-    order = Order.objects.get(pk=id)
+    order = Order.objects.get(pk=id) 
     serializer = OrderSerilizer(order, many=False)
     return Response(serializer.data)
 
 # GET ORDERS
+
+
 @api_view(['GET'])
 @permission_classes([IsAdminUser])
 def get_orders(request):
     orders = Order.objects.all()
-    serializer = OrderSerilizer(orders, many= True)
+    serializer = OrderSerilizer(orders, many=True)
     return Response(serializer.data)
+
+
+# <input type="text" name="search" />
+
+@api_view(['GET'])
+def shop(request):
+    page_num = request.query_params.get('page')
+    search_keyword = request.query_params.get('search')
+
+
+    if (search_keyword != None ): 
+
+        products = Product.objects.filter(
+            Q(name__icontains=search_keyword) |
+            Q(category__icontains=search_keyword) |
+            Q(brand__icontains=search_keyword) 
+        ).order_by('-created_date')
+
+        products_paginator = Paginator(products, 6)
+
+
+    else:
+        products = Product.objects.all().order_by('-created_date')
+        products_paginator = Paginator(products, 6)
+
+    try:
+        page = products_paginator.page(page_num)
+    except PageNotAnInteger:
+        page = products_paginator.page(1)
+    except EmptyPage:
+        page = products_paginator.page(products_paginator.num_pages)
+    serializer = ProductSerializer(page, many= True)
+    return Response ({
+        'products':serializer.data,
+        'paginator': {
+        'num_pages': products_paginator.num_pages,
+        'has_next': page.has_next(),
+        'has_prev': page.has_previous()
+        },
+    })

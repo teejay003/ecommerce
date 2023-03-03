@@ -12,8 +12,8 @@ function Header() {
     <header className="fixed-top">
       <div className="container">
         <nav className="navbar navbar-expand-md navbar-dark">
-          <Link className="navbar-brand">
-            <span className="text-pri">Pro</span>shop
+          <Link className="navbar-brand font-weight-bold">
+            <span className="text-pri">Max</span>shop
           </Link>
 
           <Toggler />

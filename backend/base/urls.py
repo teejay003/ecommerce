@@ -20,10 +20,11 @@ urlpatterns = [
     path('admin/product/update/<str:id>/', views.update_product),
     path('admin/product/create/', views.create_product),
     path('admin/orders/', views.get_orders),
+    path('admin/order/<str:id>/', views.get_order),
    
     path('checkout/place-order/', views.place_order),
-    path('checkout/order/<str:id>/', views.get_order),
 
+    path('products/shop/', views.shop),
     path('products/', views.get_products),
     path('products/<int:id>/', views.get_product),
 ]

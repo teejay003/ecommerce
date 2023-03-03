@@ -1,8 +1,23 @@
+import { useNavigate} from 'react-router-dom'
+import { useState } from 'react';
+
+
 
 function SearchBar() {
+  const navigate = useNavigate()
+  const [keyword, setKeyword] = useState("");
+  
+
+
+  const hanldeFormSubmit = (e) => {
+    e.preventDefault()
+    if (keyword !== '') {
+      navigate(`/shop/?search=${keyword}`)
+    }
+  }
   
   return (
-    <div className="container-fluid bg-white mt-4 py-3">
+    <div className="container-fluid bg-white py-3">
       <div className="row">
         <div className="col d-none d-md-flex align-items-center">
          
@@ -17,14 +32,16 @@ function SearchBar() {
           
         </div>
         <div className="col-sm-9 col-md-7">
-          <form action="">
+          <form onSubmit={ hanldeFormSubmit }>
             <div className="input-group">
               <input
                 type="search"
-                name=""
-                id=""
+                name="search"
+                value={keyword}
+                id="search"
                 className="form-control search-form"
                 placeholder="Search for products"
+                onChange={(e)=> setKeyword(e.target.value)}
               />
               <div className="input-group-append">
                 <button
