@@ -1,12 +1,14 @@
-import { useNavigate} from 'react-router-dom'
+import { useNavigate, Link} from 'react-router-dom'
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
 
 
 
 function SearchBar() {
   const navigate = useNavigate()
   const [keyword, setKeyword] = useState("");
-  
+  const {categories } = useSelector(state => state.products)
+  const {cartItems} = useSelector(state => state.cart)
 
 
   const hanldeFormSubmit = (e) => {
@@ -23,10 +25,14 @@ function SearchBar() {
          
             <div className="dropdown">
               <h5 className="dropdown-toggle" data-target="dropdown" data-toggle="dropdown">Categories</h5>
-              <ul className="dropdown-menu" id="dropdown">
-                <li className="dropdown-item">Cloths</li>
-                <li className="dropdown-item">Shoes</li>
-                <li className="dropdown-item">Bags</li>
+            <ul className="dropdown-menu" id="dropdown">
+              {
+                categories.map((category, i) => (
+                  
+                  <li className="dropdown-item" key={i}>{ category }</li>
+                ))
+              }
+               
               </ul>
           </div>
           
@@ -55,12 +61,12 @@ function SearchBar() {
           </form>
         </div>
         <div className="col d-flex justify-content-end my-sm-2 my-2 my-lg-0">
-          <div className="d-flex align-items-center">
+          <Link to="/product/cart/" className="d-flex align-items-center">
             <i className="fa fa-shopping-cart text-dark"></i>
             <span className="ml-1 badge text-secondary border border-secondary rounded-circle">
-              0
+              {cartItems.length}
             </span>
-          </div>
+          </Link>
           <div className="d-flex align-items-center justify-content-center ml-2">
             <i className="fa fa-heart text-dark"></i>
             <span className="ml-1  badge text-secondary border border-secondary rounded-circle">

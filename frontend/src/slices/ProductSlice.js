@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 
 const initialState = {
   products: [],
+  categories: [],
   shopProducts:[],
   product: {
     name: "",
@@ -110,8 +111,9 @@ const ProductSlice = createSlice({
   extraReducers: (builder) => {
     // Fetching all products handler
     builder.addCase(fetchProducts.fulfilled, (state, action) => {
-      const products = action.payload;
+      const {products, categories} = action.payload;
       state.products = products;
+      state.categories = categories
       state.loading = false;
     
     });

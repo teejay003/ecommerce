@@ -22,6 +22,8 @@ from django.core.paginator import Paginator, EmptyPage,  PageNotAnInteger
 
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
+from base.models import CHOICES
+
 
 
 # CREATE USER
@@ -164,7 +166,12 @@ def create_product(request):
 def get_products(request):
     products = Product.objects.all().order_by('-created_date')
     serializer = ProductSerializer(products, many=True)
-    return Response(serializer.data)
+   
+    category =[]
+    for item in CHOICES:
+       category.append(item[0])
+    
+    return Response({'products': serializer.data, 'categories': category})
 
 
 # GET SINGLE PRODUCT

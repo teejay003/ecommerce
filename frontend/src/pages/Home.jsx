@@ -12,7 +12,7 @@ import { fetchProducts } from "../slices/ProductSlice.js";
 import { Link } from "react-router-dom";
 
 function Home() {
-  const { loading, products } = useSelector((state) => state.products);
+  const { loading, products, categories } = useSelector((state) => state.products);
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(fetchProducts());
@@ -64,7 +64,7 @@ function Home() {
               <SwiperSlide key={i}>
             <div className={`banner banner-${i}`}>
                   <div className="content text-center text-white">
-                    <div className="w-50">
+                    <div className="col-sm-7 ">
                     <h1 className="font-weight-bold display-4">{banner.heading}</h1>
                     <h3 className="lead"> { banner.subheading }</h3>
 
@@ -88,6 +88,31 @@ function Home() {
             </div>
           ))}
         </div>
+
+        <div className="pt-5">
+        <h2 className="section-title position-relative text-uppercase mx-xl-5 mb-4"><span className="pr-3">Categories</span></h2>
+          <div className="row px-xl-5 pb-3">
+            {
+              categories.map((category, i) => (
+                <div className="col-lg-3 col-md-4 col-sm-6 pb-1" key={i}>
+                  <Link className="text-decoration-none text-dark" to={`/shop/?search=${category}`}>
+                        <div className="cat-item d-flex align-items-center mb-4">
+                      <div className="overflow-hidden" style={{ width: "100px", height: "100px"}}>
+                                <img className="img-fluid" src="" alt=""/>
+                            </div>
+                            <div className="flex-fill pl-3">
+                                <h6>{ category }</h6>
+                                <small className="text-body">{products.filter(product => product.category === category).length} Products</small>
+                            </div>
+                        </div>
+                    </Link>
+                </div>
+
+              ))
+            }
+        </div>
+    </div>
+
       </div>
     </>
   );

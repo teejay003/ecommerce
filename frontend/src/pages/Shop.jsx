@@ -5,6 +5,7 @@ import Product from '../components/Product';
 import { fetchShopProducts } from '../slices/ProductSlice';
 import Spinner from '../components/Spinner'
 import SearchBar from '../components/SearchBar';
+import { fetchProducts } from "../slices/ProductSlice.js";
 
 function Shop() {
   const dispatch = useDispatch();
@@ -20,6 +21,7 @@ function Shop() {
   useEffect(() => {
     // Fecth products for shop
     dispatch(fetchShopProducts({ keyword, page }));
+    dispatch(fetchProducts());
   }, [page, keyword, dispatch]);
 
 
