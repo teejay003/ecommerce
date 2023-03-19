@@ -7,6 +7,7 @@ from . import views
 
 
 urlpatterns = [
+
     # Authorization and Authentication path
     path('user/login/', views.MyTokenObtainPairView.as_view(), name='user-login'),
     path('user/register/', views.register_user),
