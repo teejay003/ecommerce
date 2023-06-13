@@ -177,6 +177,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
 STATIC_URL = 'static/'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 STATIC_ROOT = 'staticfiles/'
 
 MEDIA_ROOT = "static/images"
@@ -194,5 +195,4 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Additional Settings
 CORS_ALLOW_ALL_ORIGINS = True
 
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
