@@ -10,7 +10,7 @@ RUN apt-get update && apt-get install -y \
     liblcms2-dev \
     libopenjp2-7-dev \
     libwebp-dev \
-    libtiff-dev \  
+    libtiff-dev \
     libx11-dev \
     libharfbuzz-dev \
     libfribidi-dev \
@@ -23,9 +23,11 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY ./backend /app
+
+# Environment variable for the secret key
 ENV SECRET_KEY=$SECRET_KEY
+
 EXPOSE 8000
+
+# Start the application with Gunicorn
 CMD ["gunicorn", "backend.wsgi:application", "--bind", "0.0.0.0:8000"]
-
-
-
