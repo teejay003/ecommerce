@@ -31,7 +31,8 @@ jobs:
 
       - name: Build docker image
         run:
-          cd ./..
+          cd ./../..
+          ls -la
           docker build -t Jude-cicd .
       - name: Tag image
         run: docker tag blog_backend:latest ${{vars.DOCKER_USERNAME}}/blog:${{github.sha}}
